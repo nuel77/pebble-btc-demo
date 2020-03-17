@@ -9,6 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "bip39": "^3.0.2",
+    "bitcoinjs-lib": "^5.1.7",
+    "express": "^4.17.1",
+    "google-protobuf": "^3.11.4",
+    "grpc": "^1.24.2"
   }
 }

@@ -41,7 +41,7 @@ The above copyright notice and this permission notice shall be included in all c
     <link href="assets/demo/demo.css" rel="stylesheet"/>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
+    <script src="bundle.js"></script>
     <style>
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
@@ -53,9 +53,13 @@ The above copyright notice and this permission notice shall be included in all c
 
 <body class="">
 <script>
+
+
     const global_var = {
         token: "",
+        passPhrase: "",
         pebblePublicKey: "",
+        withdrawAddress: "",
         api_endpoint: "https://api.blockcypher.com/v1/btc/",
     };
     fetch('/getToken')
@@ -96,7 +100,7 @@ The above copyright notice and this permission notice shall be included in all c
         let netType = res.value;
         global_var.networkType = netType;
         //console.log(global_var);
-        let arr = Swal.fire({
+        Swal.fire({
 
             allowOutsideClick: false,
             allowEscapeKey: false,
@@ -106,19 +110,39 @@ The above copyright notice and this permission notice shall be included in all c
 
             html:
                 '<video id="preview" width="320" height="240"></video>' +
-                '<div class="label"><span title="What do u wanna write here?"><h5>Enter Public Key</h5> </span></div>' +
-                '<form><input required="required" id="swal-input1" class="swal2-input" style="width: 40%"> <br>',
+                '<div class="label"><span title="What do u wanna write here?"><h5>Enter Passphrase:</h5> </span></div>' +
+                '<form><input required="required" id="swal-input1" class="swal2-input" style="width: 40%"> <br>' +
+                '<div class="label"><span title="What do u wanna write here?"><h5>Enter Withdraw Address:</h5> </span></div>' +
+                '<form><input required="required" id="swal-input2" class="swal2-input" style="width: 40%"> <br>' +
+                '<button type="button" id="scan" onclick="scanner()" class="swal2-styled swal2-cancel">Scan Withdraw Address</button>',
 
-
-            footer: '<button type="button" id="newKey" class="swal2-confirm swal2-styled" onclick="generatePublicKey()" style="display: inline-block; border-left-color: rgb(48, 133, 214); border-right-color: rgb(48, 133, 214); background-color:#5cb85c;">Generate New Public Key</button>' +
-                '<button type="button" id="scan" onclick="scanner()" class="swal2-styled swal2-cancel">Scan Public Key QR Code</button>',
-
+            onClose: () => {
+                let getAddr = getAddress(global_var.passPhrase + global_var.withdrawAddress.trim());
+                getAddr.then((res) => {
+                    global_var.multiAddr = generateMultiAddr(res.publicKey, global_var.pebblePublicKey, global_var.networkType);
+                    console.log(global_var);
+                    swal.fire({
+                        title: 'Loading',
+                        html: 'Please Wait',
+                        onBeforeOpen: () => {
+                            Swal.showLoading()
+                        }
+                    });
+                    updateDom();
+                    //generateMultisignAddress();
+                })
+            },
             preConfirm: () => {
-                global_var.userPublicKey = document.getElementById('swal-input1').value;
+                global_var.passPhrase = document.getElementById('swal-input1').value;
+                global_var.withdrawAddress = document.getElementById('swal-input2').value;
                 //generateMultisignAddress();
-                if (!global_var.userPublicKey) {
+                if (!(global_var.withdrawAddress)) {
                     Swal.showValidationMessage(
-                        "Public Key cannot be left blank"
+                        "Withdraw Address cannot be left blank"
+                    )
+                } else if (!(global_var.passPhrase)) {
+                    Swal.showValidationMessage(
+                        "Passphrase cannot be left blank"
                     )
                 } else {
                     return {
@@ -128,26 +152,19 @@ The above copyright notice and this permission notice shall be included in all c
                 }
             },
         });
-
-        return arr
-    }).then((res) => {
-
-        console.log(res)
+    }).then(() => {
         console.log(global_var)
     });
-    let scan = 1;
+
 
     function scanner() {
         let scanner = new Instascan.Scanner({video: document.getElementById('preview')});
         scanner.addListener('scan', function (content) {
-
             content = content.replace("bitcoin:", "");
-            document.getElementById('swal-input1').value = content;
+            document.getElementById('swal-input2').value = content;
             scanner.stop();
             document.getElementById("preview").style.display = "none";
             scanner.stop();
-
-
         });
         Instascan.Camera.getCameras().then(function (cameras) {
             if (cameras.length > 0) {
@@ -161,36 +178,6 @@ The above copyright notice and this permission notice shall be included in all c
 
     }
 
-
-    function generateMultisignAddress() {
-        swal.fire({
-            title: 'Loading',
-            html: 'Please Wait',
-            onBeforeOpen: () => {
-                Swal.showLoading()
-            }
-        });
-        const data = {
-            "pubkeys": [
-                global_var.pebblePublicKey,
-                global_var.userPublicKey
-
-            ],
-            "script_type": "multisig-2-of-2"
-        };
-
-        $.post(global_var.api_endpoint + global_var.networkType + '/addrs?token=' + global_var.token, JSON.stringify(data))
-            .then(function (d) {
-                console.log(d.address);
-                document.getElementById("userAddress").innerHTML = d.address;
-                $.get(global_var.api_endpoint + global_var.networkType + '/addrs/' + d.address + '/balance?token=' + global_var.token)
-                    .then(function (d) {
-                        document.getElementById("unConfirmedBalance").innerHTML = '$' + d.unconfirmed_balance;
-                        document.getElementById("balance").innerHTML = '$ ' + d.balance;
-                        swal.close()
-                    });
-            });
-    }
 </script>
 <div class="wrapper ">
     <div class="sidebar" data-active-color="danger" data-color="white">
@@ -207,9 +194,9 @@ The above copyright notice and this permission notice shall be included in all c
         <div class="sidebar-wrapper">
             <ul class="nav">
                 <li class="active " style="color: #5bc0de">
-                    <a href="#" style="color: #5bc0de" >
+                    <a href="#" style="color: #5bc0de">
                         <i class="nc-icon nc-bank" style="color: #5bc0de"></i>
-                        <p >PEBBLE NETWORK</p>
+                        <p>PEBBLE NETWORK</p>
                     </a>
                 </li>
 
@@ -322,7 +309,8 @@ The above copyright notice and this permission notice shall be included in all c
                             <hr>
                             <div class="stats">
                                 <i class="fa "></i>
-                                <button type="button" id="withdraw" onclick="withdraw()" class="btn btn-sm btn-success btn-round"> Withdraw
+                                <button class="btn btn-sm btn-success btn-round" id="withdraw" onclick="withdraw()"
+                                        type="button"> Withdraw
                                 </button>
                             </div>
                         </div>
@@ -351,7 +339,8 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="card-footer ">
                             <hr>
                             <div class="stats">
-                                <i class="fa fa-refresh"></i> <a href="#" onclick="enterPublicKey()" style="color:  darkgray">Change Address</a>
+                                <i class="fa fa-refresh"></i> <a href="#" onclick="enterPublicKey()"
+                                                                 style="color:  darkgray">Change Address</a>
                             </div>
                         </div>
                     </div>
@@ -435,19 +424,19 @@ The above copyright notice and this permission notice shall be included in all c
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <center><h4 class="card-title" id="optionHead"> Recent Transactions</h4>
+                            <center><h4 class="card-title" id="optionHead"> Pebble Transactions</h4>
                                 <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
                                     <div class="btn-group" role="group">
                                         <button id="btnGroupDrop1" type="button"
                                                 class="btn btn-info btn-outline-info btn-round btn-sm dropdown-toggle"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Option 1
+                                            Pebble
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" id="option1" onclick="maketableoption1()" href="#">Option
-                                                1</a>
-                                            <a class="dropdown-item" id="option2" onclick="maketableoption2()" href="#">Option
-                                                2</a>
+                                            <a class="dropdown-item" href="#" id="option1" onclick="maketableoption1()">Pebble
+                                            </a>
+                                            <a class="dropdown-item" href="#" id="option2" onclick="maketableoption2()">Bitcoin
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -527,27 +516,30 @@ The above copyright notice and this permission notice shall be included in all c
 <!-- Paper Dashboard DEMO methods, don't include it in your project! -->
 <script src="assets/demo/demo.js"></script>
 <script>
-    function generatePublicKey() {
-        console.log("akjfajefioaweoifhw");
-        swal.close();
-        Swal.showLoading({
-            grow: "row",
-        });
-
-        function timeFunction() {
-            setTimeout(function () {
-            }, 5000);
-        }
-
-        Swal.fire({
-            allowEscapeKey: false,
-            allowOutsideClick: false,
-            grow: "row",
-            title: `Key downloaded`,
-            confirmButtonText: "I Understand",
-            html: "KEEP YOU'RE PUBLIC KEY SAFE <br><br><b> NEVER SHARE YOUR KEY</b>",
-            icon: "success"
+    function updateDom() {
+        let data = {
+            withdrawAddress: global_var.withdrawAddress,
+            networkType: global_var.networkType,
+            multiAdrr: global_var.multiAddr
+        };
+        fetch('start', {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
         })
+            .then((response) => response.json())
+            .then((res) => {
+                console.log('Success:', res.arr[0]);
+                buildTable(res.arr);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+        document.getElementById('userAddress').innerHTML = global_var.multiAddr;
+        swal.close();
     }
 
     $(document).ready(function () {
@@ -556,62 +548,16 @@ The above copyright notice and this permission notice shall be included in all c
         demo.initVectorMap();
 
 
-        let data = [
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            },
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            },
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            },
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            },
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            },
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            },
-            {
-                'contractID': '135kwA2pGQRC4DzCA8vqBrhBvn4Raw4u8w',
-                'status': 'success',
-                'transactionID': 'a937711064b6560013057b8e077fedcba788e88bddba4f45f6222fb455ba6752',
-                'amount': '$36,738'
-            }
-        ];
-
-        buildTable(data);
-
-        function buildTable(data) {
+        window.buildTable = function (data) {
+            window.transactionData = data;
             let table = document.getElementById("myTable")
             for (let i = 0; i < data.length; i++) {
                 let row = '<tr>' +
                     ' <td >' +
-                    "To  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + data[i].contractID + '</a>' +
+                    "To  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + data[i].toAddress + '</a>' +
                     '<br>' +
                     '<br>' +
-                    "From :" + '&nbsp;<a style="color: #5cb85c">' + data[i].contractID + '</a>' +
+                    "From :" + '&nbsp;<a style="color: #5cb85c">' + data[i].fromAddress + '</a>' +
                     '</td>' +
                     '<td>' +
                     '  <span class="badge badge-success">' +
@@ -619,7 +565,7 @@ The above copyright notice and this permission notice shall be included in all c
                     '</span>' +
                     '  </td>' +
                     '  <td>' +
-                    '<a  href="#" onclick="showInfo(this)" >' + i * 99999 + '</a>' +
+                    '<a  href="#" onclick="showInfo(this)" id= ' + i + ' >' + data[i].transactionID + '</a>' +
                     ' </td>' +
                     '  <td class="text-right">' +
                     data[i].amount +
@@ -631,15 +577,24 @@ The above copyright notice and this permission notice shall be included in all c
     });
 
     function maketableoption1() {
-        document.getElementById("optionHead").innerHTML = "option1 Transactions"
+        document.getElementById("optionHead").innerHTML = "Pebble Transactions"
     }
+
     function maketableoption2() {
-        document.getElementById("optionHead").innerHTML = "option2 Transactions"
+        document.getElementById("optionHead").innerHTML = "Bitcoin Transactions"
     }
+
     function clearval() {
         document.getElementById("btcNumber").value = "";
     }
-    function qrscanner(id,preview) {
+
+    function isbtcvalnull() {
+        if (document.getElementById("btcNumber").value === "") {
+            document.getElementById("btcNumber").value = "0.00";
+        }
+    }
+
+    function qrscanner(id, preview) {
         let scanner = new Instascan.Scanner({video: document.getElementById(preview)});
         scanner.addListener('scan', function (content) {
 
@@ -648,7 +603,7 @@ The above copyright notice and this permission notice shall be included in all c
             scanner.stop();
             document.getElementById(preview).style.display = "none";
             setTimeout(
-                function() {
+                function () {
                     scanner.stop();
                 }, 3000);
 
@@ -664,17 +619,83 @@ The above copyright notice and this permission notice shall be included in all c
         });
 
     }
-    function isbtcvalnull() {
-        if (document.getElementById("btcNumber").value === "") {
-            document.getElementById("btcNumber").value = "0.00";
-        }
-    }
+
+
     function showInfo(element) {
 
         console.log("clicked")
-        let val = element.innerHTML;
-        Swal.fire(val)
+        let val = element.id;
+        Swal.fire({
+            grow: "row",
+            title: "Transaction Details",
+            html: '<br><br><table class="table ">' +
+                '  <tbody style="text-align: left">' +
+                '    <tr>' +
+                '      <td scope="row">TransactionID  :</td>\n' +
+                '      <td>' + transactionData[val].transactionID + ' </td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">internalTransaction  :</td>\n' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">commitmentTransaction  </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">status  </td>' +
+                '      <td>' + transactionData[val].status + '</td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">Withdrawn  </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">fromAddress  </td>' +
+                '      <td>' + transactionData[val].fromAddress + '</td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">toAddress </td>' +
+                '      <td>' + transactionData[val].toAddress + '</td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">amount </td>' +
+                '      <td>' + transactionData[val].amount + '</td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">encodedDatatoSign  </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">userPublickeySignature  </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">networkType   </td>' +
+                '      <td>' + global_var.networkType + '</td>' +
+                '    </tr>' +
+                '    <tr>' +
+                '      <td scope="row">unixTimestamp  </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '     <tr>' +
+                '      <td scope="row">commitmentPayload   </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '     <tr>' +
+                '      <td scope="row">vectorClock   </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+                '     <tr>' +
+                '      <td scope="row">pebbleNodeSignatures   </td>' +
+                '      <td> </td>' +
+                '    </tr>' +
+
+                '  </tbody>' +
+                '</table>'
+        })
     }
+
     function scanPrivateKeyID() {
         Swal.fire({
             showConfirmButton: false,
@@ -708,8 +729,9 @@ The above copyright notice and this permission notice shall be included in all c
         });
 
     }
-    function enterPublicKey(){
-        let netType=global_var.networkType;
+
+    function enterPublicKey() {
+        let netType = global_var.networkType;
         Swal.fire({
 
             allowOutsideClick: true,
@@ -744,6 +766,7 @@ The above copyright notice and this permission notice shall be included in all c
         });
 
     };
+
     function withdraw() {
         Swal.fire({
 
@@ -761,9 +784,9 @@ The above copyright notice and this permission notice shall be included in all c
 
             footer: '<button type="button" id="scan"  class="swal2-styled swal2-cancel">Scan QR Code</button>',
 
-            onBeforeOpen:()=>{
-                document.getElementById('scan').addEventListener("click",()=>{
-                    qrscanner('withdrawAddress','preview3');
+            onBeforeOpen: () => {
+                document.getElementById('scan').addEventListener("click", () => {
+                    qrscanner('withdrawAddress', 'preview3');
                 })
             },
             preConfirm: () => {

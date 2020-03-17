@@ -1,4 +1,7 @@
-     const global_var = {
+"use strict";
+function start() {
+    document.getElementById("balance").innerHTML = "12121212121";
+    const global_var = {
         token: "",
         pebblePublicKey: "",
         api_endpoint: "https://api.blockcypher.com/v1/btc/",
@@ -96,3 +99,5 @@
                     });
             });
     }
+
+}

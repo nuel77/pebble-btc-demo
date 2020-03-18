@@ -715,11 +715,11 @@ The above copyright notice and this permission notice shall be included in all c
             }
         }
 
-           transactionData[val].hexencodedData= Array.from(byteArray, function(byte) {
+           transactionData[val].hexencodedData= Array.from(transactionData[val].encodedDatatoSign, function(byte) {
                 return ('0' + (byte & 0xFF).toString(16)).slice(-2);
             }).join('');
 
-        
+
 
         Swal.fire({
             grow: "row",

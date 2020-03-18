@@ -275,7 +275,7 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="card-footer ">
                             <hr>
                             <div class="stats">
-                                <i class="fa fa-refresh"></i> <a href="#" style="color: lightgray">Update Now</a>
+                                <i class="fa fa-refresh"></i> <a href="#" style="color: lightgray" onclick="updateBalance()">Update Now</a>
                             </div>
                         </div>
                     </div>
@@ -516,9 +516,7 @@ The above copyright notice and this permission notice shall be included in all c
                 multiAdrr: global_var.multiAddr
         };
         document.getElementById("inputfromAddr").value=data.multiAdrr;
-
         updateBalance();
-
         fetch('start', {
             method: 'POST', // or 'PUT'
             headers: {
@@ -534,10 +532,10 @@ The above copyright notice and this permission notice shall be included in all c
             .catch((error) => {
                 console.error('Error:', error);
             });
-
         document.getElementById('userAddress').innerHTML = global_var.multiAddr;
-
     }
+
+
     window.updateBalance=function(){
         swal.fire({
             title: 'Loading',

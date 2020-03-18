@@ -275,7 +275,8 @@ The above copyright notice and this permission notice shall be included in all c
                         <div class="card-footer ">
                             <hr>
                             <div class="stats">
-                                <i class="fa fa-refresh"></i> <a href="#" style="color: lightgray" onclick="updateBalance()">Update Now</a>
+                                <i class="fa fa-refresh"></i> <a href="#" style="color: lightgray"
+                                                                 onclick="updateBalance()">Update Now</a>
                             </div>
                         </div>
                     </div>
@@ -344,7 +345,8 @@ The above copyright notice and this permission notice shall be included in all c
                     <div class="card card-signup text-center">
                         <div class="card-header ">
                             <h5 class="card-title">Trade Bitcoin</h5>
-                            <p id="paraPebbleBalance" style="color: grey;font-size: medium">Pebble Balance: 0.000 BTC</p>
+                            <p id="paraPebbleBalance" style="color: grey;font-size: medium">Pebble Balance: 0.000
+                                BTC</p>
                             <a>
 
                                 <center><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control"
@@ -363,7 +365,8 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-single-02"></i>
                         </span>
                                     </div>
-                                    <input type="text" id="inputfromAddr" class="form-control" placeholder="From" readonly style="background-color: white">
+                                    <input type="text" id="inputfromAddr" class="form-control" placeholder="From"
+                                           readonly style="background-color: white">
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -371,7 +374,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-circle-10"></i>
                         </span>
                                     </div>
-                                    <input type="text" placeholder="To" class="form-control" >
+                                    <input type="text" placeholder="To" class="form-control">
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -423,12 +426,12 @@ The above copyright notice and this permission notice shall be included in all c
                                         <button id="btnGroupDrop1" type="button"
                                                 class="btn btn-info btn-outline-info btn-round btn-sm dropdown-toggle"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Pebble
+                                            Select Transaction Data
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#" id="option1" onclick="maketableoption1()">Pebble
+                                            <a class="dropdown-item" href="#" id="option1" onclick="buildTable(transactionData)">Pebble
                                             </a>
-                                            <a class="dropdown-item" href="#" id="option2" onclick="maketableoption2()">Bitcoin
+                                            <a class="dropdown-item" href="#" id="option2" onclick="buildTable(transactionData,false)">Bitcoin
                                             </a>
                                         </div>
                                     </div>
@@ -513,9 +516,9 @@ The above copyright notice and this permission notice shall be included in all c
         let data = {
             withdrawAddress: global_var.withdrawAddress,
             networkType: global_var.networkType,
-                multiAdrr: global_var.multiAddr
+            multiAdrr: global_var.multiAddr
         };
-        document.getElementById("inputfromAddr").value=data.multiAdrr;
+        document.getElementById("inputfromAddr").value = data.multiAdrr;
 
         fetch('start', {
             method: 'POST', // or 'PUT'
@@ -527,7 +530,7 @@ The above copyright notice and this permission notice shall be included in all c
             .then((response) => response.json())
             .then((res) => {
                 console.log('Success:', res.arr[0]);
-               // buildTable(res.arr);
+                // buildTable(res.arr);
                 updateBalance();
             })
             .catch((error) => {
@@ -537,7 +540,7 @@ The above copyright notice and this permission notice shall be included in all c
     }
 
 
-    window.updateBalance=function(){
+    window.updateBalance = function () {
         swal.fire({
             title: 'Loading',
             html: 'Please Wait',
@@ -545,9 +548,9 @@ The above copyright notice and this permission notice shall be included in all c
                 Swal.showLoading()
             }
         });
-        let data={
-            multiaddr:global_var.multiAddr,
-            netType:global_var.networkType
+        let data = {
+            multiaddr: global_var.multiAddr,
+            netType: global_var.networkType
         };
         fetch('updateBalance', {
             method: 'POST', // or 'PUT'
@@ -559,26 +562,26 @@ The above copyright notice and this permission notice shall be included in all c
             .then((response) => response.json())
             .then((res) => {
                 console.log('Success:', res);
-                document.getElementById("balance").innerHTML=res.confirmedBalance;
-                document.getElementById("paraPebbleBalance").innerHTML= 'Pebble Balance : '+res.pebbleBalance + ' BTC';
-               updateTable();
+                document.getElementById("balance").innerHTML = res.confirmedBalance;
+                document.getElementById("paraPebbleBalance").innerHTML = 'Pebble Balance : ' + res.pebbleBalance + ' BTC';
+                updateTable();
 
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
 
-        $.get(global_var.api_endpoint+global_var.networkType+'/addrs/'+global_var.multiAddr+'/balance?token='+global_var.token)
-            .then(function(d) {
+        $.get(global_var.api_endpoint + global_var.networkType + '/addrs/' + global_var.multiAddr + '/balance?token=' + global_var.token)
+            .then(function (d) {
                 console.log(d);
                 document.getElementById("unConfirmedBalance").innerHTML = d.unconfirmed_balance;
                 swal.close();
             });
     };
-    window.updateTable=function(){
-        let data={
-            multiAddr:global_var.multiAddr,
-            networkType:global_var.networkType
+    window.updateTable = function () {
+        let data = {
+            multiAddr: global_var.multiAddr,
+            networkType: global_var.networkType
         };
         fetch('updateTable', {
             method: 'POST', // or 'PUT'
@@ -604,10 +607,16 @@ The above copyright notice and this permission notice shall be included in all c
 
         demo.initVectorMap();
 
-
-
-        window.buildTable = function (data) {
+        window.buildTable = function (data,pebble=true) {
             window.transactionData = data;
+            let data2=[];
+            if(!pebble){
+                for(let i=0;i<data.length;i++){
+                    if(!data[i].internalTransaction)
+                        data2.push(data[i]);
+                }
+                data=data2;
+            }
             let table = document.getElementById("myTable")
             for (let i = 0; i < data.length; i++) {
                 let row = '<tr>' +
@@ -694,11 +703,11 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">internalTransaction  :</td>\n' +
-                '      <td> </td>' +
+                '      <td>' + transactionData[val].internalTransaction + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">commitmentTransaction  </td>' +
-                '      <td> </td>' +
+                '      <td>' + transactionData[val].commitmentTransaction + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">status  </td>' +
@@ -706,7 +715,7 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">Withdrawn  </td>' +
-                '      <td> </td>' +
+                '      <td> ' + transactionData[val].Withdrawn + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">fromAddress  </td>' +
@@ -722,11 +731,11 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">encodedDatatoSign  </td>' +
-                '      <td> </td>' +
+                '      <td> ' + transactionData[val].encodedDatatoSign + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">userPublickeySignature  </td>' +
-                '      <td> </td>' +
+                '      <td> ' + transactionData[val].userPublickeySignature + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">networkType   </td>' +
@@ -734,19 +743,19 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">unixTimestamp  </td>' +
-                '      <td> </td>' +
+                '      <td> ' + transactionData[val].unixTimestamp + '</td>' +
                 '    </tr>' +
                 '     <tr>' +
                 '      <td scope="row">commitmentPayload   </td>' +
-                '      <td> </td>' +
+                '      <td>' + transactionData[val].commitmentPayload + '</td>' +
                 '    </tr>' +
                 '     <tr>' +
                 '      <td scope="row">vectorClock   </td>' +
-                '      <td> </td>' +
+                '      <td>' + transactionData[val].vectorClock + '</td>' +
                 '    </tr>' +
                 '     <tr>' +
                 '      <td scope="row">pebbleNodeSignatures   </td>' +
-                '      <td> </td>' +
+                '      <td>' + transactionData[val].pebbleNodeSignatures + '</td>' +
                 '    </tr>' +
 
                 '  </tbody>' +

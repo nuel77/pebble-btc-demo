@@ -374,7 +374,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-circle-10"></i>
                         </span>
                                     </div>
-                                    <input type="text" placeholder="inputtoAddr" class="form-control">
+                                    <input type="text" placeholder="To" id="inputtoAddr" class="form-control">
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -607,9 +607,9 @@ The above copyright notice and this permission notice shall be included in all c
         document.getElementById("transactionForm").addEventListener("submit",(e)=>{
             e.preventDefault();
             let formData = new FormData();
-            formData.append('fromAddr',document.getElementById("inputfromAddr").value)
-            formData.append('toAddr',document.getElementById("inputtoAddr").value)
-            formData.append('key',document.getElementById("privateKeyInput").value)
+            formData.append('fromAddr',document.getElementById("inputfromAddr").value);
+            formData.append('toAddr',document.getElementById("inputtoAddr").value);
+            formData.append('key',document.getElementById("privateKeyInput").value);
             console.log(formData);
             console.log(formData.key)
         });

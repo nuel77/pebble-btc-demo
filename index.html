@@ -606,18 +606,19 @@ The above copyright notice and this permission notice shall be included in all c
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
         document.getElementById("transactionForm").addEventListener("submit",(e)=>{
             e.preventDefault();
-            let formData = new FormData();
-            let numbtc=document.getElementById("btcNumber").value
-            formData.append('nbtc',numbtc)
-            formData.append('fromAddr',document.getElementById("inputfromAddr").value);
-            formData.append('toAddr',document.getElementById("inputtoAddr").value);
-            formData.append('priority',document.getElementById("inputGroupSelect02").value);
-            console.log(formData);
-            console.log(formData.get('priority'));
+            let data={
+                nbtc:document.getElementById("btcNumber").value,
+                fromAddr:document.getElementById("inputfromAddr").value,
+                toAddr:document.getElementById("inputtoAddr").value,
+                priority:document.getElementById("inputGroupSelect02").value
+            };
 
             fetch('newTransaction',{
-                method: 'post',
-                body: formData
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             })
 
         });

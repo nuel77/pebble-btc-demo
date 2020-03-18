@@ -175,11 +175,8 @@ app.post('/updateTable',function (req,response) {
 });
 
 app.post('/newTransaction',function(req,response){
-    console.log("in new Transaction");
-    console.log(req.body);
-    console.log(req.body.toAddr);
-    console.log(req.body.priority);
-
+   let msg=req.body;
+   console.log(msg);
 
 });
 

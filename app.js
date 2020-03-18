@@ -57,16 +57,32 @@ app.post('/start',function (request,response) {
 });
 
 //function to update balance
-app.post('/updateBalance',function (request,response) {
-    let msg=request.body;
+app.post('/updateBalance',function (req,response) {
+    let msg=req.body;
     console.log("this is from UpdateBalance :" + msg.netType);
-    let res=callGauthamforBalance(msg.multiaddr,msg.netType);
     // let res={
     //     confirmedBalance:"524",
     //     pebbleBalance:"682"
     // };
-    response.send(JSON.stringify(res));
-
+    let client = new services.PebbleBTCClient(
+        "localhost:5031",
+        grpc.credentials.createInsecure()
+    );
+    let request=new dataStr.Account();
+    request.setJointaccountaddress(msg.multiaddr);
+    request.setNetworktype(msg.netType);
+    client.updateBalance(request,(err,res)=>{
+        let responseData={};
+        if(err){
+            console.log("callGauthamGrpcError :"+err)
+        }
+        else {
+            responseData.confirmedBalance = res.getConfirmedbalance();
+            responseData.pebbleBalance = res.getPebblebalance();
+            console.log(responseData);
+            response.send(JSON.stringify(responseData));
+        }
+    });
 
 });
 app.get('/createTransaction',function (request,response) {
@@ -113,31 +129,6 @@ function  callGauthamforTransactions(multiAddr,withdrawAddress,networkType) {
     return arr;
 }
 
-function  callGauthamforBalance(multiAddr,netType){
-    let client = new services.PebbleBTCClient(
-        "localhost:5031",
-        grpc.credentials.createInsecure()
-    );
-    let request=new dataStr.Account();
-    request.setJointaccountaddress(multiAddr);
-    request.setNetworktype(netType);
-        let clientresp=client.updateBalance(request,(err,res)=>{
-        let responseData={};
-        if(err){
-            console.log("callGauthamGrpcError :"+err)
-        }
-        else {
-            responseData.confirmedBalance = res.getConfirmedbalance();
-            responseData.pebbleBalance = res.getPebblebalance();
-            console.log(responseData);
-            return responseData;
-        }
-        console.log(clientresp);
-        return clientresp;
-    });
-
-
-}
 
 
 const server = app.listen(5030,function () {

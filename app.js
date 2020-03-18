@@ -121,7 +121,7 @@ function  callGauthamforBalance(multiAddr,netType){
     let request=new dataStr.Account();
     request.setJointaccountaddress(multiAddr);
     request.setNetworktype(netType);
-       return client.updateBalance(request,(err,res)=>{
+        let clientresp=client.updateBalance(request,(err,res)=>{
         let responseData={};
         if(err){
             console.log("callGauthamGrpcError :"+err)
@@ -132,6 +132,8 @@ function  callGauthamforBalance(multiAddr,netType){
             console.log(responseData);
             return responseData;
         }
+        console.log(clientresp);
+        return clientresp;
     });
 
 

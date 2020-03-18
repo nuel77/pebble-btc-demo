@@ -53,7 +53,8 @@ The above copyright notice and this permission notice shall be included in all c
 
 <body class="">
 <script>
-
+    window.currTxArr=[];
+    window.counter=0;
 
     const global_var = {
         token: "",
@@ -382,12 +383,8 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-key-25"></i>
                         </span>
                                     </div>
-                                    <input type="text" id="privateKeyInput" class="form-control"
-                                           placeholder="Private key">&nbsp;&nbsp;
-                                    <span title="Scan QR Code of Private Key"><a href="#"
-                                                                                 style="color: grey;text-decoration: none;"
-                                                                                 onclick="scanPrivateKeyID()"> <i
-                                            href="#" class="fa fa-camera fa-3x " aria-hidden="true"></i></a></span>
+                                    <input type="text" id="fee" class="form-control"
+                                           placeholder="Transaction Fee">&nbsp;&nbsp;
                                 </div>
                                 <button class="btn btn-info  btn-lg" style="width: 100%"><i
                                         class="fa fa-lock fa-lg"></i>&nbsp;Pay
@@ -562,8 +559,10 @@ The above copyright notice and this permission notice shall be included in all c
             .then((response) => response.json())
             .then((res) => {
                 console.log('Success:', res);
-                document.getElementById("balance").innerHTML = res.confirmedBalance;
-                document.getElementById("paraPebbleBalance").innerHTML = 'Pebble Balance : ' + res.pebbleBalance + ' BTC';
+                let x=Number(res.confirmedBalance)/100000000;
+                let y=Number(res.pebbleBalance)/100000000;
+                document.getElementById("balance").innerHTML = x.toString();
+                document.getElementById("paraPebbleBalance").innerHTML = 'Pebble Balance : ' + y.toString() + ' BTC';
                 updateTable();
 
             })
@@ -574,7 +573,8 @@ The above copyright notice and this permission notice shall be included in all c
         $.get(global_var.api_endpoint + global_var.networkType + '/addrs/' + global_var.multiAddr + '/balance?token=' + global_var.token)
             .then(function (d) {
                 console.log(d);
-                document.getElementById("unConfirmedBalance").innerHTML = d.unconfirmed_balance;
+                let z=Number(d.unconfirmed_balance)/100000000;
+                document.getElementById("unConfirmedBalance").innerHTML =z.toString();
                 swal.close();
             });
     };
@@ -609,9 +609,10 @@ The above copyright notice and this permission notice shall be included in all c
             let formData = new FormData();
             formData.append('fromAddr',document.getElementById("inputfromAddr").value);
             formData.append('toAddr',document.getElementById("inputtoAddr").value);
-            formData.append('key',document.getElementById("privateKeyInput").value);
+            formData.append('fee',document.getElementById("fee").value);
             console.log(formData);
-            console.log(formData.key)
+            console.log(formData.get('fee'))
+
         });
 
 
@@ -805,39 +806,6 @@ The above copyright notice and this permission notice shall be included in all c
         })
     }
 
-    function scanPrivateKeyID() {
-        Swal.fire({
-            showConfirmButton: false,
-            showCancelButton: true,
-            html:
-                '<video id="preview2" width="320" height="240"></video>',
-            onClose: () => {
-                scanner.stop();
-            }
-        });
-        let scanner = new Instascan.Scanner({video: document.getElementById('preview2')});
-        scanner.addListener('scan', function (content) {
-
-            content = content.replace("bitcoin:", "");
-            document.getElementById('privateKeyInput').value = content;
-            scanner.stop();
-            document.getElementById("preview2").style.display = "none";
-            swal.close();
-
-        });
-        Instascan.Camera.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-            } else {
-                scanner.stop();
-                console.error('No cameras found.');
-            }
-        }).catch(function (e) {
-            scanner.stop();
-            console.error(e);
-        });
-
-    }
 
     function enterPublicKey() {
         let netType = global_var.networkType;

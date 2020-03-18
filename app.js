@@ -35,15 +35,10 @@ app.get('/getPebblePublicKey',function (request,response) {
 
 
 
-
-
-
 //the function called on to initialize the account
-app.post('/start',function (request,response) {
-
-    let msg=request.body;
+app.post('/start',function (req,response) {
     //console.log(msg);
-   let respArray=callGauthamforTransactions(msg.multiAdrr,msg.withdrawAddress,msg.networkType);
+
    //  let respArray = [{
    //      toAddress: "toAddressfromapp.js",
    //      amount: "$36,738",
@@ -52,14 +47,51 @@ app.post('/start',function (request,response) {
    //      fromAddress: "fromAddressfromapp.js"
    //  }
    //  ];
-    let res = {arr: respArray};
-    response.send(JSON.stringify(res));
+    let msg=req.body;
+    let client = new services.PebbleBTCClient(
+        'localhost:5031',
+        grpc.credentials.createInsecure()
+    );
+    let request=new dataStr.Account();
+    request.setJointaccountaddress(msg.multiAdrr);
+    request.setWithdrawingaddress(msg.withdrawAddress);
+    request.setNetworktype(msg.networkType);
+    let call=client.registerJointAccount(request,()=>{});
+    let respArray=[];
+    call.on("data",res=>{
+        respArray.push({
+            toAddress:res.getToaddress(),
+            amount:res.getAmount(),
+            unixTimestamp:res.getUnixtimestamp(),
+            transactionID:res.getTransactionid(),
+            pebbleNodeSignatures:res.getPebblenodesignaturesList(),
+            status:res.getStatus(),
+            fromAddress:res.getFromaddress(),
+            vectorClock:res.getVectorclockList(),
+            commitmentPayload:res.getCommitmentpayloadList(),
+            networkType:res.getNetworktype(),
+            commitmentTransaction:res.getCommitmenttransaction(),
+            internalTransaction:res.getInternaltransaction(),
+            encodedDatatoSign:res.getEncodeddatatosign(),
+            Withdrawn:res.getWithdrawn(),
+            userPublickeySignature:res.getUserpublickeysignature()
+        });
+    });
+    call.on("error",error=>{console.log(error)});
+
+    call.on('end', function() {
+        let res = {arr: respArray};
+        response.send(JSON.stringify(res));
+        call.end();
+    });
+
 });
 
 //function to update balance
 app.post('/updateBalance',function (req,response) {
     let msg=req.body;
     console.log("this is from UpdateBalance :" + msg.netType);
+
     // let res={
     //     confirmedBalance:"524",
     //     pebbleBalance:"682"
@@ -85,29 +117,21 @@ app.post('/updateBalance',function (req,response) {
     });
 
 });
-app.get('/createTransaction',function (request,response) {
-    //console.log(request);
-    response.send(request.body);
-});
-app.get('/withdrawBitcoins',function (request,response) {
-   // console.log(request);
-    response.send(request.body);
-});
 
-//calling grpc api
-function  callGauthamforTransactions(multiAddr,withdrawAddress,networkType) {
+
+app.post('/updateTable',function (req,response) {
+    let msg=req.body;
     let client = new services.PebbleBTCClient(
         'localhost:5031',
         grpc.credentials.createInsecure()
     );
     let request=new dataStr.Account();
-    request.setJointaccountaddress(multiAddr);
-    request.setWithdrawingaddress(withdrawAddress);
-    request.setNetworktype(networkType);
-    let call=client.registerJointAccount(request,()=>{});
-    let arr=[];
+    request.setJointaccountaddress(msg.multiAddr);
+    request.setNetworktype(msg.networkType);
+    let call=client.getAllTx(request,()=>{});
+    let respArray=[];
     call.on("data",res=>{
-        arr.push({
+        respArray.push({
             toAddress:res.getToaddress(),
             amount:res.getAmount(),
             unixTimestamp:res.getUnixtimestamp(),
@@ -126,8 +150,20 @@ function  callGauthamforTransactions(multiAddr,withdrawAddress,networkType) {
         });
     });
     call.on("error",error=>{console.log(error)});
-    return arr;
-}
+    call.on('end',()=>{
+        let res = {arr: respArray};
+        response.send(JSON.stringify(res));
+        call.end();
+    })
+
+});
+
+
+
+
+
+
+
 
 
 

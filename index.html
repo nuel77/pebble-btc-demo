@@ -527,7 +527,7 @@ The above copyright notice and this permission notice shall be included in all c
             .then((response) => response.json())
             .then((res) => {
                 console.log('Success:', res.arr[0]);
-                buildTable(res.arr);
+               // buildTable(res.arr);
                 updateBalance();
             })
             .catch((error) => {
@@ -561,6 +561,8 @@ The above copyright notice and this permission notice shall be included in all c
                 console.log('Success:', res);
                 document.getElementById("balance").innerHTML=res.confirmedBalance;
                 document.getElementById("paraPebbleBalance").innerHTML= 'Pebble Balance : '+res.pebbleBalance + ' BTC';
+               updateTable();
+
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -573,6 +575,29 @@ The above copyright notice and this permission notice shall be included in all c
                 swal.close();
             });
     };
+    window.updateTable=function(){
+        let data={
+            multiAddr:global_var.multiAddr,
+            networkType:global_var.networkType
+        };
+        fetch('updateTable', {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((res) => {
+                console.log('Success:', res);
+                buildTable(res.arr)
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+    }
 
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js

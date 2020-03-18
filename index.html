@@ -376,15 +376,18 @@ The above copyright notice and this permission notice shall be included in all c
                         </span>
                                     </div>
                                     <input type="text" placeholder="To" id="inputtoAddr" class="form-control">
+
                                 </div>
                                 <div class="input-group">
-                                    <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <i class="nc-icon nc-key-25"></i>
-                        </span>
+                                    <select class="custom-select" id="inputGroupSelect02">
+                                        <option selected>Choose Speed...</option>
+                                        <option value="1">Slow</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Fast</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <label class="input-group-text" for="inputGroupSelect02">Options</label>
                                     </div>
-                                    <input type="text" id="fee" class="form-control"
-                                           placeholder="Transaction Fee">&nbsp;&nbsp;
                                 </div>
                                 <button class="btn btn-info  btn-lg" style="width: 100%"><i
                                         class="fa fa-lock fa-lg"></i>&nbsp;Pay
@@ -607,9 +610,11 @@ The above copyright notice and this permission notice shall be included in all c
         document.getElementById("transactionForm").addEventListener("submit",(e)=>{
             e.preventDefault();
             let formData = new FormData();
+            let numbtc=document.getElementById("btcNumber").value
+            formData.append('nbtc',numbtc)
             formData.append('fromAddr',document.getElementById("inputfromAddr").value);
             formData.append('toAddr',document.getElementById("inputtoAddr").value);
-            formData.append('fee',document.getElementById("fee").value);
+            formData.append('fee',document.getElementById("inputGroupSelect02").value);
             console.log(formData);
             console.log(formData.get('fee'))
 
@@ -805,7 +810,39 @@ The above copyright notice and this permission notice shall be included in all c
                 '</table>'
         })
     }
+     function scanPrivateKeyID() {
+         Swal.fire({
+             showConfirmButton: false,
+             showCancelButton: true,
+             html:
+                 '<video id="preview2" width="320" height="240"></video>',
+             onClose: () => {
+                 scanner.stop();
+             }
+         });
+         let scanner = new Instascan.Scanner({video: document.getElementById('preview2')});
+         scanner.addListener('scan', function (content) {
 
+             content = content.replace("bitcoin:", "");
+             document.getElementById('inputtoAddr').value = content;
+             scanner.stop();
+             document.getElementById("preview2").style.display = "none";
+             swal.close();
+
+         });
+         Instascan.Camera.getCameras().then(function (cameras) {
+             if (cameras.length > 0) {
+                 scanner.start(cameras[0]);
+             } else {
+                 scanner.stop();
+                 console.error('No cameras found.');
+             }
+         }).catch(function (e) {
+             scanner.stop();
+             console.error(e);
+         });
+
+     }
 
     function enterPublicKey() {
         let netType = global_var.networkType;

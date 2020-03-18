@@ -426,7 +426,7 @@ The above copyright notice and this permission notice shall be included in all c
                                         <button id="btnGroupDrop1" type="button"
                                                 class="btn btn-info btn-outline-info btn-round btn-sm dropdown-toggle"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            Select Transaction Data
+                                           Pebble
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                             <a class="dropdown-item" href="#" id="option1" onclick="buildTable(transactionData)">Pebble
@@ -612,27 +612,30 @@ The above copyright notice and this permission notice shall be included in all c
 
             let tabledata=[];
             if(!pebble){
-                console.log("bitcoin Clicked");
+
+                document.getElementById(btnGroupDrop1).innerText="Pebble";
+                console.log(data[0].internalTransaction);
+                for (let i = 0; i < data.length; i++){
+                    if(!data[i].internalTransaction)
+                        tabledata.push(data[i]);
+                }
+
+            }
+            else {
+
+                document.getElementById(btnGroupDrop1).innerText="Bitcoin";
                 console.log(data[0].internalTransaction)
                 for(let i=0;i<data.length;i++){
                     if(data[i].internalTransaction)
                         tabledata.push(data[i]);
                 }
             }
-            else {
-                console.log("Pebble Clicked");
-                console.log(data[0].internalTransaction);
-                for (let i = 0; i < data.length; i++){
-                    if(!data[i].internalTransaction)
-                        tabledata.push(data[i]);
-                }
-            }
             let table = document.getElementById("myTable");
             table.innerHTML ="";
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < tabledata.length; i++) {
                 let row = '<tr>' +
                     ' <td >' +
-                    "To  &nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + tabledata[i].toAddress + '</a>' +
+                    "To  &nbsp;&nbsp;&nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + tabledata[i].toAddress + '</a>' +
                     '<br>' +
                     "From :" + '&nbsp;<a style="color: #5cb85c">' + tabledata[i].fromAddress + '</a>' +
                     '</td>' +
@@ -701,7 +704,14 @@ The above copyright notice and this permission notice shall be included in all c
     function showInfo(element) {
 
         console.log("clicked")
-        let val = element.id;
+        let transID = element.innerHTML;
+        let val=0;
+        for(let i=0;i<transactionData.length;i++){
+            if(transactionData[i].transactionID == transID){
+                val=i;
+                break;
+            }
+        }
         Swal.fire({
             grow: "row",
             title: "Transaction Details",

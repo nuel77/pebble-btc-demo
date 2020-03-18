@@ -209,10 +209,9 @@ app.post('/newTransaction',function(req,response){
                 ans.networkType=res.getNetworktype();
                 ans.commitmentTransaction=res.getCommitmenttransaction();
                 ans.internalTransaction=res.getInternaltransaction();
-                ans.encodedDatatoSig=:res.getEncodeddatatosign();
+                ans.encodedDatatoSig=res.getEncodeddatatosign();
                 ans.Withdrawn=res.getWithdrawn();
                 ans.userPublickeySignature=res.getUserpublickeysignature();
-                ans.pebbleNodeSignaturesArray=pebbleNodeSignaturesArray;
             response.send(JSON.stringify(ans));
         }
     })

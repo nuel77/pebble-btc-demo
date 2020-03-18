@@ -566,7 +566,7 @@ The above copyright notice and this permission notice shall be included in all c
                 console.error('Error:', error);
             });
 
-        $.get(global_var.api_endpoint+data.networkType+'/addrs/'+global_var.multiAddr+'/balance?token='+global_var.token)
+        $.get(global_var.api_endpoint+global_var.networkType+'/addrs/'+global_var.multiAddr+'/balance?token='+global_var.token)
             .then(function(d) {
                 console.log(d);
                 document.getElementById("unConfirmedBalance").innerHTML = d.unconfirmed_balance;

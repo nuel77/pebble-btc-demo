@@ -17,7 +17,6 @@ app.get('/',(req,res)=>{
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // For getting token after round robin algorithm from a list
 app.get('/getToken',function (request,response) {
@@ -169,11 +168,6 @@ app.post('/updateTable',function (req,response) {
         let res = {arr: respArray};
         response.send(JSON.stringify(res));
 
-    });
-
-    app.post('/newTransaction',function (req,response) {
-        console.log(req.body);
-        console.log(req.body.inputFromAddr)
     })
 
 });

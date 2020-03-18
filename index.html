@@ -379,11 +379,11 @@ The above copyright notice and this permission notice shall be included in all c
 
                                 </div>
                                 <div class="input-group">
-                                    <select class="custom-select" id="inputGroupSelect02">
-                                        <option selected>Transaction Prioriy...</option>
-                                        <option value="1">Low</option>
-                                        <option value="2">Medium</option>
-                                        <option value="3">High</option>
+                                    <select class="custom-select" id="inputGroupSelect02" required>
+                                        <option selected>Transaction Priority</option>
+                                        <option value="1">Low (~ < 12 blocks)</option>
+                                        <option value="2">Medium (~ < 6 blocks)</option>
+                                        <option value="3">High (~ < 4 blocks)</option>
                                     </select>
                                 </div>
                                 <button class="btn btn-info  btn-lg" style="width: 100%"><i
@@ -611,9 +611,14 @@ The above copyright notice and this permission notice shall be included in all c
             formData.append('nbtc',numbtc)
             formData.append('fromAddr',document.getElementById("inputfromAddr").value);
             formData.append('toAddr',document.getElementById("inputtoAddr").value);
-            formData.append('fee',document.getElementById("inputGroupSelect02").value);
+            formData.append('priority',document.getElementById("inputGroupSelect02").value);
             console.log(formData);
-            console.log(formData.get('fee'))
+            console.log(formData.get('priority'));
+
+            fetch('newTransaction',{
+                method: 'POST',
+                body: formData;
+            }).then
 
         });
 

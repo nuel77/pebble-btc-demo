@@ -17,6 +17,7 @@ app.get('/',(req,res)=>{
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({extended:true}));
 
 // For getting token after round robin algorithm from a list
 app.get('/getToken',function (request,response) {
@@ -167,19 +168,16 @@ app.post('/updateTable',function (req,response) {
     call.on('end',()=>{
         let res = {arr: respArray};
         response.send(JSON.stringify(res));
-
     })
-
 });
 
+app.post('/newTransaction',(req,response)=>{
+    console.log(req.body.fromAddr);
+    console.log(req.body.toAddr);
+    console.log(req.body.priority);
 
 
-
-
-
-
-
-
+});
 
 const server = app.listen(5030,function () {
 console.log("API Gateway listening on port %d", server.address().port);

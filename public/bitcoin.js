@@ -1,7 +1,7 @@
 const global_var = {
     token: "",
-    passPhrase: "",
-    withdrawAddress: "",
+    passPhrase:"",
+    withdrawAddress:"",
     api_endpoint: "https://api.blockcypher.com/v1/btc/",
 };
 fetch('/getToken')
@@ -53,25 +53,27 @@ Swal.fire({
         html:
             '<video id="preview" width="320" height="240"></video>' +
             '<div class="label"><span title="What do u wanna write here?"><h5>Enter Passphrase:</h5> </span></div>' +
-            '<form><input required="required" id="swal-input1" class="swal2-input" style="width: 40%"> <br>' +
+            '<form><input required="required" id="swal-input1" class="swal2-input" style="width: 40%"> <br>'+
             '<div class="label"><span title="What do u wanna write here?"><h5>Enter Withdraw Address:</h5> </span></div>' +
-            '<form><input required="required" id="swal-input2" class="swal2-input" style="width: 40%"> <br>' +
+            '<form><input required="required" id="swal-input2" class="swal2-input" style="width: 40%"> <br>'+
             '<button type="button" id="scan" onclick="scanner()" class="swal2-styled swal2-cancel">Scan Withdraw Address</button>',
 
 
         preConfirm: () => {
             global_var.passPhrase = document.getElementById('swal-input1').value;
-            global_var.withdrawAddress = document.getElementById('swal-input2').value;
+            global_var.withdrawAddress=document.getElementById('swal-input2').value;
             //generateMultisignAddress();
             if (!(global_var.withdrawAddress)) {
                 Swal.showValidationMessage(
                     "Withdraw Address cannot be left blank"
                 )
-            } else if (!(global_var.passPhrase)) {
+            }
+            else if(!(global_var.passPhrase)){
                 Swal.showValidationMessage(
                     "Passphrase cannot be left blank"
                 )
-            } else {
+            }
+            else {
                 return {
                     networkType: netType,
                     publicKey: document.getElementById('swal-input1').value,

@@ -16,11 +16,12 @@ app.get('/',(req,res)=>{
     res.sendFile(__dirname+"/index.html")
 });
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-
+app.use(bodyParser.json());
 // For getting token after round robin algorithm from a list
 app.get('/getToken',function (request,response) {
     tokenIterator = tokenIterator +1;
@@ -173,7 +174,7 @@ app.post('/updateTable',function (req,response) {
     })
 });
 
-app.post('/newTransaction',(req,response)=>{
+app.post('/newTransaction',function(req,response){
     console.log("in new Transaction");
     console.log(req.body);
     console.log(req.body.toAddr);

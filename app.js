@@ -82,7 +82,7 @@ app.post('/start',function (req,response) {
     call.on('end', function() {
         let res = {arr: respArray};
         response.send(JSON.stringify(res));
-        call.end();
+
     });
 
 });
@@ -153,7 +153,7 @@ app.post('/updateTable',function (req,response) {
     call.on('end',()=>{
         let res = {arr: respArray};
         response.send(JSON.stringify(res));
-        call.end();
+
     })
 
 });

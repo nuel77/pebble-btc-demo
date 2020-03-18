@@ -1,4 +1,17 @@
+<!--
+=========================================================
+ Paper Dashboard 2 - v2.0.0
+=========================================================
 
+ Product Page: https://www.creative-tim.com/product/paper-dashboard-2
+ Copyright 2019 Creative Tim (https://www.creative-tim.com)
+ Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard/blob/master/LICENSE)
+
+ Coded by Creative Tim
+
+=========================================================
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
 
 
 <!DOCTYPE html>
@@ -108,13 +121,6 @@
                 getAddr.then((res) => {
                     global_var.multiAddr = generateMultiAddr(res.publicKey, global_var.pebblePublicKey, global_var.networkType);
                     console.log(global_var);
-                    swal.fire({
-                        title: 'Loading',
-                        html: 'Please Wait',
-                        onBeforeOpen: () => {
-                            Swal.showLoading()
-                        }
-                    });
                     updateDom();
                     //generateMultisignAddress();
                 })
@@ -338,9 +344,9 @@
                     <div class="card card-signup text-center">
                         <div class="card-header ">
                             <h5 class="card-title">Trade Bitcoin</h5>
-                            <p style="color: grey;font-size: medium">Pebble Balance: 0.000 BTC</p>
+                            <p id="paraPebbleBalance" style="color: grey;font-size: medium">Pebble Balance: 0.000 BTC</p>
                             <a>
-                                 <i class="fa fa-btc" style="font-size: 5em;color:#4C4C4C;"></i> 
+
                                 <center><input type="number" inputmode="numeric" pattern="[0-9]*" class="form-control"
                                                id="btcNumber" onclick="clearval()" onmouseleave="isbtcvalnull()"
                                                style="border: none;border-bottom-color: transparent;font-size: 3em;text-align: center; "
@@ -511,13 +517,8 @@
         };
         document.getElementById("inputfromAddr").value=data.multiAdrr;
 
-        $.get(global_var.api_endpoint+data.networkType+'/addrs/'+data.multiAdrr+'/balance?token='+global_var.token)
-            .then(function(d) {
-                console.log(d);
-                document.getElementById("unConfirmedBalance").innerHTML = d.unconfirmed_balance;
-                document.getElementById("balance").innerHTML = d.balance;
-                swal.close();
-            });
+        updateBalance();
+
         fetch('start', {
             method: 'POST', // or 'PUT'
             headers: {
@@ -537,6 +538,43 @@
         document.getElementById('userAddress').innerHTML = global_var.multiAddr;
 
     }
+    window.updateBalance=function(){
+        swal.fire({
+            title: 'Loading',
+            html: 'Please Wait',
+            onBeforeOpen: () => {
+                Swal.showLoading()
+            }
+        });
+        let data={
+            multiaddr:global_var.multiAddr,
+            netType:global_var.networkType
+        };
+        fetch('updateBalance', {
+            method: 'POST', // or 'PUT'
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.json())
+            .then((res) => {
+                console.log('Success:', res);
+                document.getElementById("balance").innerHTML=res.confirmedBalance;
+                document.getElementById("paraPebbleBalance").innerHTML= 'Pebble Balance : '+res.pebbleBalance + ' BTC';
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+        $.get(global_var.api_endpoint+data.networkType+'/addrs/'+global_var.multiAddr+'/balance?token='+global_var.token)
+            .then(function(d) {
+                console.log(d);
+                document.getElementById("unConfirmedBalance").innerHTML = d.unconfirmed_balance;
+                swal.close();
+            });
+    };
 
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js

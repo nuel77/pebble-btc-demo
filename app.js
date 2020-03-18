@@ -1,8 +1,8 @@
 const express = require('express');
 const grpc = require('grpc');
 var bodyParser = require('body-parser');
-//const services = require('../bitcoin-web/protobuf/APIs_grpc_pb');
-//const dataStr = require('../bitcoin-web/protobuf/APIs_pb');
+// const services = require('../bitcoin-web/protobuf/APIs_grpc_pb');
+// const dataStr = require('../bitcoin-web/protobuf/APIs_pb');
 const services = require('../pebble-btc-demo/protobuf/APIs_grpc_pb');
 const dataStr = require('../pebble-btc-demo/protobuf/APIs_pb');
 const app = express();
@@ -15,6 +15,7 @@ app.get('/',(req,res)=>{
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 // For getting token after round robin algorithm from a list
 app.get('/getToken',function (request,response) {
     tokenIterator = tokenIterator +1;
@@ -26,46 +27,45 @@ app.get('/getToken',function (request,response) {
        // console.log(tokens[index])
     }
 });
-
 app.get('/getPebblePublicKey',function (request,response) {
 
     response.send("021a46d92df358af9acce575810581b4cc24fc9387c5ef073efefb83a6421beae4");
 });
 
+
+
+
+
+
+
 //the function called on to initialize the account
 app.post('/start',function (request,response) {
 
     let msg=request.body;
-    console.log(msg);
-    let respArray=callGauthamforTransactions(msg.multiAdrr,msg.withdrawAddress,msg.networkType);
+    //console.log(msg);
+   let respArray=callGauthamforTransactions(msg.multiAdrr,msg.withdrawAddress,msg.networkType);
     // let respArray = [{
     //     toAddress: "toAddressfromapp.js",
     //     amount: "$36,738",
     //     transactionID: "021a46d92df358af9acce575810581b4cc24fc9387c5ef073efefb83a6421beae4",
     //     status: 'success',
     //     fromAddress: "fromAddressfromapp.js"
-    // },
-    //     {
-    //         toAddress: "toAddressfromapp.js",
-    //         amount: "$36,738",
-    //         transactionID: "2",
-    //         status: 'success',
-    //         fromAddress: "fromAddressfromapp.js"
-    //     },
-    //     {
-    //         toAddress: "toAddressfromapp.js",
-    //         amount: "$36,738",
-    //         transactionID: "3",
-    //         status: 'success',
-    //         fromAddress: "fromAddressfromapp.js"
-    //     }
+    // }
     // ];
     let res = {arr: respArray};
     response.send(JSON.stringify(res));
 });
-app.get('/updateBalance',function (request,response) {
-   //console.log(request);
-    response.send(request.body);
+
+//function to update balance
+app.post('/updateBalance',function (request,response) {
+    let msg=request.body;
+    console.log(msg.multiaddr);
+   let res=callGauthamforBalance(msg.multiaddr,msg.networkType);
+   //  let res={
+   //      confirmedBalance:"524",
+   //      pebbleBalance:"682"
+   //  };
+    response.send(JSON.stringify(res));
 });
 app.get('/createTransaction',function (request,response) {
     //console.log(request);
@@ -110,6 +110,29 @@ function  callGauthamforTransactions(multiAddr,withdrawAddress,networkType) {
     call.on("error",error=>{console.log(error)});
     return arr;
 }
+
+function  callGauthamforBalance(multiAddr,netType){
+    let client = new services.PebbleBTCClient(
+        'localhost:5031',
+        grpc.credentials.createInsecure()
+    );
+    let request=new dataStr.Account();
+    request.setJointaccountaddress(multiAddr);
+    request.setNetworktype(netType);
+    let responseData={};
+    client.updateBalance(request,(err,res)=>{
+        if(err){
+            console.log("callGauthamGrpcError :"+err)
+        }
+        else {
+            responseData.confirmedBalance = res.getConfirmedbalance();
+            responseData.pebbleBalance = res.getPebblebalance();
+        }
+    });
+    return responseData;
+}
+
+
 const server = app.listen(5030,function () {
 console.log("API Gateway listening on port %d", server.address().port);
 });

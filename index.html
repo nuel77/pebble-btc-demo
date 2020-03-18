@@ -610,33 +610,42 @@ The above copyright notice and this permission notice shall be included in all c
         window.buildTable = function (data,pebble=true) {
             window.transactionData = data;
 
-            let data2=[];
+            let tabledata=[];
             if(!pebble){
+                console.log("bitcoin Clicked");
+                console.log(data[0].internalTransaction)
                 for(let i=0;i<data.length;i++){
-                    if(!data[i].internalTransaction)
-                        data2.push(data[i]);
+                    if(data[i].internalTransaction)
+                        tabledata.push(data[i]);
                 }
-                data=data2;
+            }
+            else {
+                console.log("Pebble Clicked");
+                console.log(data[0].internalTransaction);
+                for (let i = 0; i < data.length; i++){
+                    if(!data[i].internalTransaction)
+                        tabledata.push(data[i]);
+                }
             }
             let table = document.getElementById("myTable");
             table.innerHTML ="";
             for (let i = 0; i < data.length; i++) {
                 let row = '<tr>' +
                     ' <td >' +
-                    "To  &nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + data[i].toAddress + '</a>' +
+                    "To  &nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + tabledata[i].toAddress + '</a>' +
                     '<br>' +
-                    "From :" + '&nbsp;<a style="color: #5cb85c">' + data[i].fromAddress + '</a>' +
+                    "From :" + '&nbsp;<a style="color: #5cb85c">' + tabledata[i].fromAddress + '</a>' +
                     '</td>' +
                     '<td>' +
                     '  <span class="badge badge-success">' +
-                    data[i].status +
+                    tabledata[i].status +
                     '</span>' +
                     '  </td>' +
                     '  <td>' +
-                    '<a  href="#" onclick="showInfo(this)" id= ' + i + ' >' + data[i].transactionID + '</a>' +
+                    '<a  href="#" onclick="showInfo(this)" id= ' + i + ' >' + tabledata[i].transactionID + '</a>' +
                     ' </td>' +
                     '  <td class="text-right">' +
-                    data[i].amount +
+                    tabledata[i].amount +
                     ' </td>' +
                     '</tr>'
                 table.innerHTML += row;

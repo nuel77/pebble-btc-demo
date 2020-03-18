@@ -370,7 +370,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-single-02"></i>
                         </span>
                                     </div>
-                                    <input type="text" class="form-control" placeholder="From">
+                                    <input type="text" id="inputfromAddr" class="form-control" placeholder="From" readonly style="background-color: white">
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -378,7 +378,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-circle-10"></i>
                         </span>
                                     </div>
-                                    <input type="text" placeholder="To" class="form-control">
+                                    <input type="text" placeholder="To" class="form-control" >
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -520,8 +520,17 @@ The above copyright notice and this permission notice shall be included in all c
         let data = {
             withdrawAddress: global_var.withdrawAddress,
             networkType: global_var.networkType,
-            multiAdrr: global_var.multiAddr
+                multiAdrr: global_var.multiAddr
         };
+        document.getElementById("inputfromAddr").value=data.multiAdrr;
+
+        $.get(global_var.api_endpoint+data.networkType+'/addrs/'+data.multiAdrr+'/balance?token='+global_var.token)
+            .then(function(d) {
+                console.log(d);
+                document.getElementById("unConfirmedBalance").innerHTML = d.unconfirmed_balance;
+                document.getElementById("balance").innerHTML = d.balance;
+                swal.close();
+            });
         fetch('start', {
             method: 'POST', // or 'PUT'
             headers: {
@@ -539,7 +548,7 @@ The above copyright notice and this permission notice shall be included in all c
             });
 
         document.getElementById('userAddress').innerHTML = global_var.multiAddr;
-        swal.close();
+
     }
 
     $(document).ready(function () {

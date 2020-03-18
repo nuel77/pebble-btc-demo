@@ -516,7 +516,7 @@ The above copyright notice and this permission notice shall be included in all c
                 multiAdrr: global_var.multiAddr
         };
         document.getElementById("inputfromAddr").value=data.multiAdrr;
-        updateBalance();
+
         fetch('start', {
             method: 'POST', // or 'PUT'
             headers: {
@@ -528,6 +528,7 @@ The above copyright notice and this permission notice shall be included in all c
             .then((res) => {
                 console.log('Success:', res.arr[0]);
                 buildTable(res.arr);
+                updateBalance();
             })
             .catch((error) => {
                 console.error('Error:', error);

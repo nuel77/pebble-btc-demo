@@ -130,6 +130,7 @@ function  callGauthamforBalance(multiAddr,netType){
             responseData.pebbleBalance = res.getPebblebalance();
         }
     });
+    console.log(responseData);
     return responseData;
 }
 

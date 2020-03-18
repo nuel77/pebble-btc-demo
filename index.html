@@ -512,7 +512,7 @@ The above copyright notice and this permission notice shall be included in all c
 <!-- Paper Dashboard DEMO methods, don't include it in your project! -->
 <script src="assets/demo/demo.js"></script>
 <script>
-    function updateDom() {
+     window.updateDom=function() {
         let data = {
             withdrawAddress: global_var.withdrawAddress,
             networkType: global_var.networkType,
@@ -601,19 +601,18 @@ The above copyright notice and this permission notice shall be included in all c
             });
 
     }
-    document.getElementById("transactionForm").addEventListener("submit",(e)=>{
-            e.preventDefault();
-            let formData = new FormData();
-            formData.append('fromAddr':document.getElementById("inputfromAddr").value);
-            formData.append('toAddr':document.getElementById("inputtoAddr").value);
-            formData.append('key':document.getElementById("privateKeyInput").value);
-            console.log(formData);
-            console.log(formData.key)
-        });
-
 
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
+        document.getElementById("transactionForm").addEventListener("submit",(e)=>{
+            e.preventDefault();
+            let formData = new FormData();
+            formData.append('fromAddr',document.getElementById("inputfromAddr").value)
+            formData.append('toAddr',document.getElementById("inputtoAddr").value)
+            formData.append('key',document.getElementById("privateKeyInput").value)
+            console.log(formData);
+            console.log(formData.key)
+        });
 
 
 

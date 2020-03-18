@@ -601,10 +601,7 @@ The above copyright notice and this permission notice shall be included in all c
             });
 
     }
-
-    $(document).ready(function () {
-        // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
-        document.getElementById("transactionForm").addEventListener("submit",(e)=>{
+    document.getElementById("transactionForm").addEventListener("submit",(e)=>{
             e.preventDefault();
             let formData = new FormData();
             formData.append('fromAddr':document.getElementById("inputfromAddr").value);
@@ -613,6 +610,10 @@ The above copyright notice and this permission notice shall be included in all c
             console.log(formData);
             console.log(formData.key)
         });
+
+
+    $(document).ready(function () {
+        // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
 
 
 

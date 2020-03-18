@@ -784,7 +784,10 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '     <tr>' +
                 '      <td scope="row">pebbleNodeSignatures   </td>' +
-                '      <td>' + transactionData[val].pebbleNodeSignaturesArray + '</td>' +
+                '      <td>' + transactionData[val].pebbleNodeSignaturesArray[0] +
+                '       <br>'+transactionData[val].pebbleNodeSignaturesArray[1] +
+                '       <br>'+ transactionData[val].pebbleNodeSignaturesArray[2]+
+                '       </td>' +
                 '    </tr>' +
 
                 '  </tbody>' +

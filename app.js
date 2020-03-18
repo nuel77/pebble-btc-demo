@@ -17,7 +17,9 @@ app.get('/',(req,res)=>{
 });
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 // For getting token after round robin algorithm from a list
 app.get('/getToken',function (request,response) {
@@ -172,7 +174,8 @@ app.post('/updateTable',function (req,response) {
 });
 
 app.post('/newTransaction',(req,response)=>{
-    console.log(req.body.fromAddr);
+    console.log("in new Transaction");
+    console.log(req.body);
     console.log(req.body.toAddr);
     console.log(req.body.priority);
 

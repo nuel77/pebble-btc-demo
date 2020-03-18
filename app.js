@@ -66,8 +66,9 @@ app.post('/start',function (req,response) {
     let respArray=[];
     call.on("data",res=>{
         let temp=res.getPebblenodesignaturesList();
+
         let pebbleNodeSignaturesArray=[];
-        for(let i=0;i<3;i++){
+        for(let i=0;i<temp.length;i++){
             pebbleNodeSignaturesArray.push(bs58.encode(temp[i]))
         }
         respArray.push({

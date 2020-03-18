@@ -374,7 +374,7 @@ The above copyright notice and this permission notice shall be included in all c
                           <i class="nc-icon nc-circle-10"></i>
                         </span>
                                     </div>
-                                    <input type="text" placeholder="To" class="form-control">
+                                    <input type="text" placeholder="To"  id="inputtoAddr" class="form-control">
                                 </div>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
@@ -426,12 +426,14 @@ The above copyright notice and this permission notice shall be included in all c
                                         <button id="btnGroupDrop1" type="button"
                                                 class="btn btn-info btn-outline-info btn-round btn-sm dropdown-toggle"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                           Pebble
+                                            Pebble
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#" id="option1" onclick="buildTable(transactionData)">Pebble
+                                            <a class="dropdown-item" href="#" id="option1"
+                                               onclick="buildTable(transactionData)">Pebble
                                             </a>
-                                            <a class="dropdown-item" href="#" id="option2" onclick="buildTable(transactionData,false)">Bitcoin
+                                            <a class="dropdown-item" href="#" id="option2"
+                                               onclick="buildTable(transactionData,false)">Bitcoin
                                             </a>
                                         </div>
                                     </div>
@@ -607,33 +609,32 @@ The above copyright notice and this permission notice shall be included in all c
 
         demo.initVectorMap();
 
-        window.buildTable = function (data,pebble=true) {
+        window.buildTable = function (data, pebble = true) {
             window.transactionData = data;
 
-            let tabledata=[];
-            if(!pebble){
+            let tabledata = [];
+            if (!pebble) {
 
-                document.getElementById("btnGroupDrop1").innerHTML="Bitcoin";
-                document.getElementById("optionHead").innerHTML="Bitcoin Transactions";
+                document.getElementById("btnGroupDrop1").innerHTML = "Bitcoin";
+                document.getElementById("optionHead").innerHTML = "Bitcoin Transactions";
                 console.log(data[0].internalTransaction);
-                for (let i = 0; i < data.length; i++){
-                    if(!data[i].internalTransaction)
+                for (let i = 0; i < data.length; i++) {
+                    if (!data[i].internalTransaction)
                         tabledata.push(data[i]);
                 }
 
-            }
-            else {
+            } else {
 
-                document.getElementById("btnGroupDrop1").innerHTML="Pebble";
-                document.getElementById("optionHead").innerHTML="Pebble Transactions";
+                document.getElementById("btnGroupDrop1").innerHTML = "Pebble";
+                document.getElementById("optionHead").innerHTML = "Pebble Transactions";
                 console.log(data[0].internalTransaction);
-                for(let i=0;i<data.length;i++){
-                    if(data[i].internalTransaction)
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].internalTransaction)
                         tabledata.push(data[i]);
                 }
             }
             let table = document.getElementById("myTable");
-            table.innerHTML ="";
+            table.innerHTML = "";
             for (let i = 0; i < tabledata.length; i++) {
                 let row = '<tr>' +
                     ' <td >' +
@@ -656,6 +657,23 @@ The above copyright notice and this permission notice shall be included in all c
                 table.innerHTML += row;
             }
         }
+
+        document.getElementById("transactionForm").onsubmit(e => {
+            e.preventDefault();
+            let formdata = new formData();
+            let inputFromAddr = document.getElementById("inputfromAddr").value;
+            let inputToAddr = document.getElementById("inputtoAddr").value;
+            let inputKey = document.getElementById("privateKeyInput").value;
+            formdata.append('inputFromAddr':inputFromAddr);
+            formdata.append('inputToAddr':inputToAddr);
+            formdata.append('inputKey':inputKey);
+            fetch('newTransaction', {
+                method: 'POST', // or 'PUT'
+                body: formdata,
+            })
+        })
+
+
     });
 
     function maketableoption1() {
@@ -707,18 +725,17 @@ The above copyright notice and this permission notice shall be included in all c
 
         console.log("clicked")
         let transID = element.innerHTML;
-        let val=0;
-        for(let i=0;i<transactionData.length;i++){
-            if(transactionData[i].transactionID == transID){
-                val=i;
+        let val = 0;
+        for (let i = 0; i < transactionData.length; i++) {
+            if (transactionData[i].transactionID == transID) {
+                val = i;
                 break;
             }
         }
 
-           transactionData[val].hexencodedData= Array.from(transactionData[val].encodedDatatoSign, function(byte) {
-                return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-            }).join('');
-
+        transactionData[val].hexencodedData = Array.from(transactionData[val].encodedDatatoSign, function (byte) {
+            return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+        }).join('');
 
 
         Swal.fire({
@@ -784,8 +801,8 @@ The above copyright notice and this permission notice shall be included in all c
                 '     <tr>' +
                 '      <td scope="row">pebbleNodeSignatures   </td>' +
                 '      <td style="font-size: 15px">' + transactionData[val].pebbleNodeSignaturesArray[0] +
-                '       <br>'+transactionData[val].pebbleNodeSignaturesArray[1] +
-                '       <br>'+ transactionData[val].pebbleNodeSignaturesArray[2]+
+                '       <br>' + transactionData[val].pebbleNodeSignaturesArray[1] +
+                '       <br>' + transactionData[val].pebbleNodeSignaturesArray[2] +
                 '       </td>' +
                 '    </tr>' +
 

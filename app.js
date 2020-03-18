@@ -7,6 +7,8 @@ const services = require('../pebble-btc-demo/protobuf/APIs_grpc_pb');
 const dataStr = require('../pebble-btc-demo/protobuf/APIs_pb');
 const app = express();
 const tokens = ["91542a37db764d1c8e499404862c7ccd","a0d480b076774357baab2329be7b308d","1f04a3d4f6434c87ad5ef58daa34c4bd","f1a46886248e4d629cb68fe0ba681329"];
+const bs58 = require('bs58');
+
 
 let tokenIterator = 0;
 app.use(express.static("public"));
@@ -59,6 +61,11 @@ app.post('/start',function (req,response) {
     let call=client.registerJointAccount(request,()=>{});
     let respArray=[];
     call.on("data",res=>{
+        let temp=res.getPebblenodesignaturesList();
+        let pebbleNodeSignaturesArray=[];
+        for(let i=0;i<3;i++){
+            pebbleNodeSignaturesArray.push(bs58.encode(temp[i]))
+        }
         respArray.push({
             toAddress:res.getToaddress(),
             amount:res.getAmount(),
@@ -74,7 +81,8 @@ app.post('/start',function (req,response) {
             internalTransaction:res.getInternaltransaction(),
             encodedDatatoSign:res.getEncodeddatatosign(),
             Withdrawn:res.getWithdrawn(),
-            userPublickeySignature:res.getUserpublickeysignature()
+            userPublickeySignature:res.getUserpublickeysignature(),
+            pebbleNodeSignaturesArray:pebbleNodeSignaturesArray
         });
     });
     call.on("error",error=>{console.log(error)});
@@ -131,6 +139,11 @@ app.post('/updateTable',function (req,response) {
     let call=client.getAllTx(request,()=>{});
     let respArray=[];
     call.on("data",res=>{
+        let temp=res.getPebblenodesignaturesList();
+        let pebbleNodeSignaturesArray=[];
+        for(let i=0;i<3;i++){
+            pebbleNodeSignaturesArray.push(bs58.encode(temp[i]))
+        }
         respArray.push({
             toAddress:res.getToaddress(),
             amount:res.getAmount(),
@@ -146,7 +159,8 @@ app.post('/updateTable',function (req,response) {
             internalTransaction:res.getInternaltransaction(),
             encodedDatatoSign:res.getEncodeddatatosign(),
             Withdrawn:res.getWithdrawn(),
-            userPublickeySignature:res.getUserpublickeysignature()
+            userPublickeySignature:res.getUserpublickeysignature(),
+            pebbleNodeSignaturesArray:pebbleNodeSignaturesArray
         });
     });
     call.on("error",error=>{console.log(error)});

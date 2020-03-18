@@ -614,6 +614,7 @@ The above copyright notice and this permission notice shall be included in all c
             if(!pebble){
 
                 document.getElementById("btnGroupDrop1").innerHTML="Bitcoin";
+                document.getElementById("optionHead").innerHTML="Bitcoin Transactions";
                 console.log(data[0].internalTransaction);
                 for (let i = 0; i < data.length; i++){
                     if(!data[i].internalTransaction)
@@ -624,6 +625,7 @@ The above copyright notice and this permission notice shall be included in all c
             else {
 
                 document.getElementById("btnGroupDrop1").innerHTML="Pebble";
+                document.getElementById("optionHead").innerHTML="Pebble Transactions";
                 console.log(data[0].internalTransaction);
                 for(let i=0;i<data.length;i++){
                     if(data[i].internalTransaction)
@@ -712,6 +714,13 @@ The above copyright notice and this permission notice shall be included in all c
                 break;
             }
         }
+
+           transactionData[val].hexencodedData= Array.from(byteArray, function(byte) {
+                return ('0' + (byte & 0xFF).toString(16)).slice(-2);
+            }).join('');
+
+        
+
         Swal.fire({
             grow: "row",
             title: "Transaction Details",
@@ -751,7 +760,7 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">encodedDatatoSign  </td>' +
-                '      <td> ' + transactionData[val].encodedDatatoSign + '</td>' +
+                '      <td> ' + transactionData[val].hexencodedData + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">userPublickeySignature  </td>' +

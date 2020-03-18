@@ -177,6 +177,45 @@ app.post('/updateTable',function (req,response) {
 app.post('/newTransaction',function(req,response){
    let msg=req.body;
    console.log(msg);
+   let nbtc=Number(msg.nbtc);
+   let priority=Number(msg.priority);
+   let client = new services.PebbleBTCClient(
+        'localhost:5031',
+        grpc.credentials.createInsecure()
+    );
+    let request=new dataStr.Transaction();
+    request.setFromaddress(msg.fromAddr);
+    request.setToaddress(msg.toAddr);
+    request.setAmount(nbtc);
+    request.setNetworktype(msg.netType);
+    client.createTx(request,(err,res)=>{
+        let ans={
+            error:0,
+        };
+        if(err){
+            ans.error=1;
+            response.send(JSON.stringify(ans));
+        }
+        else{
+                ans.toAddress=res.getToaddress();
+                ans.amount=res.getAmount();
+                ans.unixTimestamp=res.getUnixtimestamp();
+                ans.transactionID=res.getTransactionid();
+                ans.pebbleNodeSignatures=res.getPebblenodesignaturesList();
+                ans.status=res.getStatus();
+                ans.fromAddress=res.getFromaddress();
+                ans.vectorClock=res.getVectorclockList();
+                ans.commitmentPayload=res.getCommitmentpayloadList();
+                ans.networkType=res.getNetworktype();
+                ans.commitmentTransaction=res.getCommitmenttransaction();
+                ans.internalTransaction=res.getInternaltransaction();
+                ans.encodedDatatoSig=:res.getEncodeddatatosign();
+                ans.Withdrawn=res.getWithdrawn();
+                ans.userPublickeySignature=res.getUserpublickeysignature();
+                ans.pebbleNodeSignaturesArray=pebbleNodeSignaturesArray;
+            response.send(JSON.stringify(ans));
+        }
+    })
 
 });
 

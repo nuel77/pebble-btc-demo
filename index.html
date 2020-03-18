@@ -610,7 +610,8 @@ The above copyright notice and this permission notice shall be included in all c
                 nbtc:document.getElementById("btcNumber").value,
                 fromAddr:document.getElementById("inputfromAddr").value,
                 toAddr:document.getElementById("inputtoAddr").value,
-                priority:document.getElementById("inputGroupSelect02").value
+                priority:document.getElementById("inputGroupSelect02").value,
+                netType: global_var.networkType
             };
 
             fetch('newTransaction',{
@@ -619,7 +620,15 @@ The above copyright notice and this permission notice shall be included in all c
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
-            })
+            }) .then((response) => response.json())
+                .then((res) => {
+                    console.log('NewTxData:', res);
+                    buildTable(res)
+
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
 
         });
 

@@ -65,7 +65,10 @@ app.post('/updateBalance',function (request,response) {
     //     confirmedBalance:"524",
     //     pebbleBalance:"682"
     // };
-    response.send(JSON.stringify(res));
+    res.then((res)=>{
+        response.send(JSON.stringify(res));
+    });
+
 });
 app.get('/createTransaction',function (request,response) {
     //console.log(request);
@@ -119,19 +122,20 @@ function  callGauthamforBalance(multiAddr,netType){
     let request=new dataStr.Account();
     request.setJointaccountaddress(multiAddr);
     request.setNetworktype(netType);
-
-    let responseData={};
-    client.updateBalance(request,(err,res)=>{
+    return client.updateBalance(request,(err,res)=>{
+        let responseData={};
         if(err){
             console.log("callGauthamGrpcError :"+err)
         }
         else {
             responseData.confirmedBalance = res.getConfirmedbalance();
             responseData.pebbleBalance = res.getPebblebalance();
+            console.log(responseData);
+            return responseData;
         }
     });
-    console.log(responseData);
-    return responseData;
+
+
 }
 
 

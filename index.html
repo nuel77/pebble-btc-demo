@@ -609,6 +609,7 @@ The above copyright notice and this permission notice shall be included in all c
 
         window.buildTable = function (data,pebble=true) {
             window.transactionData = data;
+
             let data2=[];
             if(!pebble){
                 for(let i=0;i<data.length;i++){
@@ -617,12 +618,12 @@ The above copyright notice and this permission notice shall be included in all c
                 }
                 data=data2;
             }
-            let table = document.getElementById("myTable")
+            let table = document.getElementById("myTable");
+            table.innerHTML ="";
             for (let i = 0; i < data.length; i++) {
                 let row = '<tr>' +
                     ' <td >' +
-                    "To  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + data[i].toAddress + '</a>' +
-                    '<br>' +
+                    "To  &nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + data[i].toAddress + '</a>' +
                     '<br>' +
                     "From :" + '&nbsp;<a style="color: #5cb85c">' + data[i].fromAddress + '</a>' +
                     '</td>' +

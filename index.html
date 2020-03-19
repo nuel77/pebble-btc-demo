@@ -637,52 +637,56 @@ The above copyright notice and this permission notice shall be included in all c
         demo.initVectorMap();
 
         window.buildTable = function (data,pebble=true) {
-            window.transactionData = data;
+            if(data.length>0){
+                window.transactionData = data;
+                let tabledata=[];
+                if(!pebble){
 
-            let tabledata=[];
-            if(!pebble){
+                    document.getElementById("btnGroupDrop1").innerHTML="Bitcoin";
+                    document.getElementById("optionHead").innerHTML="Bitcoin Transactions";
+                    console.log(data[0].internalTransaction);
+                    for (let i = 0; i < data.length; i++){
+                        if(!data[i].internalTransaction)
+                            tabledata.push(data[i]);
+                    }
 
-                document.getElementById("btnGroupDrop1").innerHTML="Bitcoin";
-                document.getElementById("optionHead").innerHTML="Bitcoin Transactions";
-                console.log(data[0].internalTransaction);
-                for (let i = 0; i < data.length; i++){
-                    if(!data[i].internalTransaction)
-                        tabledata.push(data[i]);
                 }
+                else {
 
+                    document.getElementById("btnGroupDrop1").innerHTML="Pebble";
+                    document.getElementById("optionHead").innerHTML="Pebble Transactions";
+                    console.log(data[0].internalTransaction);
+                    for(let i=0;i<data.length;i++){
+                        if(data[i].internalTransaction)
+                            tabledata.push(data[i]);
+                    }
+                }
+                let table = document.getElementById("myTable");
+                table.innerHTML ="";
+                for (let i = 0; i < tabledata.length; i++) {
+                    let row = '<tr>' +
+                        ' <td >' +
+                        "To  &nbsp;&nbsp;&nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + tabledata[i].toAddress + '</a>' +
+                        '<br>' +
+                        "From :" + '&nbsp;<a style="color: #5cb85c">' + tabledata[i].fromAddress + '</a>' +
+                        '</td>' +
+                        '<td>' +
+                        '  <span class="badge badge-success">' +
+                        tabledata[i].status +
+                        '</span>' +
+                        '  </td>' +
+                        '  <td>' +
+                        '<a  href="#" onclick="showInfo(this)" id= ' + i + ' >' + tabledata[i].transactionID + '</a>' +
+                        ' </td>' +
+                        '  <td class="text-right">' +
+                        tabledata[i].amount +
+                        ' </td>' +
+                        '</tr>'
+                    table.innerHTML += row;
+                }
             }
             else {
-
-                document.getElementById("btnGroupDrop1").innerHTML="Pebble";
-                document.getElementById("optionHead").innerHTML="Pebble Transactions";
-                console.log(data[0].internalTransaction);
-                for(let i=0;i<data.length;i++){
-                    if(data[i].internalTransaction)
-                        tabledata.push(data[i]);
-                }
-            }
-            let table = document.getElementById("myTable");
-            table.innerHTML ="";
-            for (let i = 0; i < tabledata.length; i++) {
-                let row = '<tr>' +
-                    ' <td >' +
-                    "To  &nbsp;&nbsp;&nbsp;&nbsp; :" + '&nbsp;<a style="color: gray">' + tabledata[i].toAddress + '</a>' +
-                    '<br>' +
-                    "From :" + '&nbsp;<a style="color: #5cb85c">' + tabledata[i].fromAddress + '</a>' +
-                    '</td>' +
-                    '<td>' +
-                    '  <span class="badge badge-success">' +
-                    tabledata[i].status +
-                    '</span>' +
-                    '  </td>' +
-                    '  <td>' +
-                    '<a  href="#" onclick="showInfo(this)" id= ' + i + ' >' + tabledata[i].transactionID + '</a>' +
-                    ' </td>' +
-                    '  <td class="text-right">' +
-                    tabledata[i].amount +
-                    ' </td>' +
-                    '</tr>'
-                table.innerHTML += row;
+                console.log("cant build table")
             }
         }
     });

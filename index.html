@@ -381,9 +381,8 @@ The above copyright notice and this permission notice shall be included in all c
                                 </div>
                                 <div class="input-group">
                                     <select class="custom-select" id="inputGroupSelect02" required>
-                                        <option selected>Transaction Priority</option>
-                                        <option value="1">Low (~ < 12 blocks)</option>
-                                        <option value="2">Medium (~ < 6 blocks)</option>
+                                        <option  value="1">Low (~ < 12 blocks)</option>
+                                        <option selected value="2">Medium (~ < 6 blocks)</option>
                                         <option value="3">High (~ < 4 blocks)</option>
                                     </select>
                                 </div>
@@ -623,33 +622,43 @@ The above copyright notice and this permission notice shall be included in all c
             };
             console.log("transaction fetch :"+data.nbtc);
 
-            // let newtx = {
-            //     inputs: [{
-            //         "addresses"   : [key1.public, key2.public],
-            //         "script_type" : "multisig-2-of-2"
-            //     }],
-            //     outputs: [{addresses: ['2MtKD3ceEzV9NQderGXtzw5yPj1arUWrRMo'], value: 10000}],
-            //     preference:"high"
-            // };
-            // $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+token, JSON.stringify(newtx))
-            //     .then(function(d) {console.log(d)})
+            if(data.priority == 1){
+                data.preference="low";
+            }
+            else if(data.priority == 2){
+                data.preference="medium";
+            }
+            else {
+                data.preference="high";
+            }
+
+            let newtx = {
+                inputs: [{
+                    "addresses"   : [global_var.generatedPublicKey, global_var.pebblePublicKey],
+                    "script_type" : "multisig-2-of-2"
+                }],
+                outputs: [{addresses: [data.toAddr], value: Number(data.nbtc)*100000000}],
+                preference:data.preference;
+            };
+            $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+token, JSON.stringify(newtx))
+                .then(function(d) {console.log(d)})
 
 
-            fetch('transact',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            }) .then((response) => response.json())
-                .then((res) => {
-                    console.log('NewTxData:', res);
-                    buildTable(res)
-
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+            // fetch('transact',{
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     body: JSON.stringify(data),
+            // }) .then((response) => response.json())
+            //     .then((res) => {
+            //         console.log('NewTxData:', res);
+            //         buildTable(res)
+            //
+            //     })
+            //     .catch((error) => {
+            //         console.error('Error:', error);
+            //     });
 
         });
 

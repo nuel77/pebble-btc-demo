@@ -121,9 +121,24 @@ The above copyright notice and this permission notice shall be included in all c
                 let getAddr = getAddress(global_var.passPhrase + global_var.withdrawAddress.trim());
                 getAddr.then((res) => {
                     global_var.generatedPublicKey=res.publicKey;
-                    global_var.multiAddr = generateMultiAddr(res.publicKey, global_var.pebblePublicKey, global_var.networkType);
-                    console.log(global_var);
-                    updateDom();
+                    var data = {
+                        "pubkeys": [
+                            global_var.generatedPublicKey,
+                            global_var.pebblePublicKey,
+                        ],
+                        "script_type": "multisig-2-of-2"
+                    };
+                    $.post('https://api.blockcypher.com/v1/btc/'+global_var.networkType+'/addrs', JSON.stringify(data))
+                        .then(function(d) {
+                            console.log(d);
+                            global_var.multiAddr=d.address;
+                            console.log(global_var);
+                            updateDom();
+                        });
+
+                   //global_var.multiAddr = generateMultiAddr(res.publicKey, global_var.pebblePublicKey, global_var.networkType);
+                    //console.log(global_var);
+                   // updateDom();
                     //generateMultisignAddress();
                 })
             },
@@ -640,7 +655,7 @@ The above copyright notice and this permission notice shall be included in all c
                 outputs: [{addresses: [data.toAddr], value: Number(data.nbtc)*100000000}],
                 preference:data.preference
             };
-            $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+global_var.token, JSON.stringify(newtx))
+            $.post('https://api.blockcypher.com/v1/btc/'+global_var.networkType+'/txs/new?token='+global_var.token, JSON.stringify(newtx))
                 .then(function(d) {console.log(d)})
 
 

@@ -560,7 +560,7 @@ The above copyright notice and this permission notice shall be included in all c
             .then((res) => {
                 console.log('Success:', res);
                 let x=Number(res.confirmedBalance)/100000000;
-                let y=Number(res.pebbleBalance);
+                let y=Number(res.pebbleBalance)/100000000;
                 document.getElementById("balance").innerHTML = x.toString();
                 document.getElementById("paraPebbleBalance").innerHTML = 'Pebble Balance : ' + y.toString() + ' BTC';
                 updateTable();

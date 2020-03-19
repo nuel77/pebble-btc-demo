@@ -180,6 +180,7 @@ app.post('/transact',function(req,response){
    console.log(msg);
    console.log("node has recieved youre message :" +msg.nbtc);
    let Numnbtc=parseFloat(msg.nbtc);
+   Numnbtc=Numnbtc*100000000;
    let client = new services.PebbleBTCClient(
         'localhost:5031',
         grpc.credentials.createInsecure()

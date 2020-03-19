@@ -178,7 +178,7 @@ app.post('/updateTable',function (req,response) {
 app.post('/transact',function(req,response){
    let msg=req.body;
    console.log(msg);
-   console.log(msg.nbtc);
+   console.log("node has recieved youre message :" +msg.nbtc);
    let Numnbtc=parseFloat(msg.nbtc);
    let client = new services.PebbleBTCClient(
         'localhost:5031',

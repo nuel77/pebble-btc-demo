@@ -647,7 +647,7 @@ The above copyright notice and this permission notice shall be included in all c
                 data.preference="high";
             }
             let intvalforCypher=Number(data.nbtc)*100000000;
-            let valForCypher=BigInt(intvalforCypher);
+            let valForCypher=BigInt(parseInt(intvalforCypher));
             let newtx = {
                 inputs: [{
                     "addresses"   : [global_var.generatedPublicKey, global_var.pebblePublicKey],

@@ -646,13 +646,14 @@ The above copyright notice and this permission notice shall be included in all c
             else {
                 data.preference="high";
             }
-
+            let intvalforCypher=Number(data.nbtc)*100000000;
+            let valForCypher=BigInt(intvalforCypher);
             let newtx = {
                 inputs: [{
                     "addresses"   : [global_var.generatedPublicKey, global_var.pebblePublicKey],
                     "script_type" : "multisig-2-of-2"
                 }],
-                outputs: [{addresses: [data.toAddr], value: Number(data.nbtc)*100000000}],
+                outputs: [{addresses: [data.toAddr], value:valForCypher}],
                 preference:data.preference
             };
             $.post('https://api.blockcypher.com/v1/btc/'+global_var.networkType+'/txs/new?token='+global_var.token, JSON.stringify(newtx))

@@ -175,11 +175,11 @@ app.post('/updateTable',function (req,response) {
     })
 });
 
-app.post('/newTransaction',function(req,response){
+app.post('/transact',function(req,response){
    let msg=req.body;
    console.log(msg);
-   let nbtc=Number(msg.nbtc);
-   let priority=Number(msg.priority);
+   console.log(msg.nbtc);
+   let Numnbtc=parseFloat(msg.nbtc);
    let client = new services.PebbleBTCClient(
         'localhost:5031',
         grpc.credentials.createInsecure()
@@ -187,7 +187,7 @@ app.post('/newTransaction',function(req,response){
     let request=new dataStr.Transaction();
     request.setFromaddress(msg.fromAddr);
     request.setToaddress(msg.toAddr);
-    request.setAmount(nbtc);
+    request.setAmount(Numnbtc);
     request.setNetworktype(msg.netType);
     client.createTx(request,(err,res)=>{
         let ans={

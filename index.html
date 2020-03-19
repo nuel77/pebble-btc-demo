@@ -600,21 +600,21 @@ The above copyright notice and this permission notice shall be included in all c
                 console.error('Error:', error);
             });
 
-    }
+    };
 
     $(document).ready(function () {
         // Javascript method's body can be found in assets/assets-for-demo/js/demo.js
         document.getElementById("transactionForm").addEventListener("submit",(e)=>{
             e.preventDefault();
             let data={
-                nbtc:document.getElementById("btcNumber").value,
+                nbtc:(document.getElementById("btcNumber").value).toString(),
                 fromAddr:document.getElementById("inputfromAddr").value,
                 toAddr:document.getElementById("inputtoAddr").value,
                 priority:document.getElementById("inputGroupSelect02").value,
                 netType: global_var.networkType
             };
-
-            fetch('newTransaction',{
+            console.log("transaction fetch :"+nbtc );
+            fetch('transact',{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

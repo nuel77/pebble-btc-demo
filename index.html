@@ -640,7 +640,7 @@ The above copyright notice and this permission notice shall be included in all c
                 outputs: [{addresses: [data.toAddr], value: Number(data.nbtc)*100000000}],
                 preference:data.preference
             };
-            $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+token, JSON.stringify(newtx))
+            $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+global_var.token, JSON.stringify(newtx))
                 .then(function(d) {console.log(d)})
 
 

@@ -120,6 +120,7 @@ The above copyright notice and this permission notice shall be included in all c
             onClose: () => {
                 let getAddr = getAddress(global_var.passPhrase + global_var.withdrawAddress.trim());
                 getAddr.then((res) => {
+                    global_var.generatedPublicKey=res.publicKey;
                     global_var.multiAddr = generateMultiAddr(res.publicKey, global_var.pebblePublicKey, global_var.networkType);
                     console.log(global_var);
                     updateDom();
@@ -621,6 +622,18 @@ The above copyright notice and this permission notice shall be included in all c
                 netType: global_var.networkType
             };
             console.log("transaction fetch :"+data.nbtc);
+
+            // let newtx = {
+            //     inputs: [{
+            //         "addresses"   : [key1.public, key2.public],
+            //         "script_type" : "multisig-2-of-2"
+            //     }],
+            //     outputs: [{addresses: ['2MtKD3ceEzV9NQderGXtzw5yPj1arUWrRMo'], value: 10000}],
+            //     preference:"high"
+            // };
+            // $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+token, JSON.stringify(newtx))
+            //     .then(function(d) {console.log(d)})
+
 
             fetch('transact',{
                 method: 'POST',

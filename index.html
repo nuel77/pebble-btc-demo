@@ -510,6 +510,13 @@ The above copyright notice and this permission notice shall be included in all c
 <script src="assets/demo/demo.js"></script>
 <script>
      window.updateDom=function() {
+         swal.fire({
+             title: 'Loading',
+             html: 'Please Wait',
+             onBeforeOpen: () => {
+                 Swal.showLoading()
+             }
+         });
         let data = {
             withdrawAddress: global_var.withdrawAddress,
             networkType: global_var.networkType,
@@ -528,6 +535,7 @@ The above copyright notice and this permission notice shall be included in all c
             .then((res) => {
                 console.log('Success:', res.arr[0]);
                 // buildTable(res.arr);
+                swal.close();
                 updateBalance();
             })
             .catch((error) => {
@@ -575,7 +583,6 @@ The above copyright notice and this permission notice shall be included in all c
                 console.log(d);
                 let z=Number(d.unconfirmed_balance)/100000000;
                 document.getElementById("unConfirmedBalance").innerHTML =z.toString();
-                swal.close();
             });
     };
     window.updateTable = function () {
@@ -593,8 +600,8 @@ The above copyright notice and this permission notice shall be included in all c
             .then((response) => response.json())
             .then((res) => {
                 console.log('Success:', res);
-                buildTable(res.arr)
-
+                buildTable(res.arr);
+                swal.close();
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -680,7 +687,7 @@ The above copyright notice and this permission notice shall be included in all c
                         '<a  href="#" onclick="showInfo(this)" id= ' + i + ' >' + tabledata[i].transactionID + '</a>' +
                         ' </td>' +
                         '  <td class="text-right">' +
-                        tabledata[i].amount +
+                       Number(tabledata[i].amount)/100000000  +
                         ' </td>' +
                         '</tr>'
                     table.innerHTML += row;
@@ -789,7 +796,7 @@ The above copyright notice and this permission notice shall be included in all c
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">amount </td>' +
-                '      <td>' + transactionData[val].amount + '</td>' +
+                '      <td>' + Number(transactionData[val].amount)/100000000 + '</td>' +
                 '    </tr>' +
                 '    <tr>' +
                 '      <td scope="row">encodedDatatoSign  </td>' +

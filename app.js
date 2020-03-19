@@ -187,6 +187,7 @@ app.post('/transact',function(req,response){
     let request=new dataStr.Transaction();
     request.setFromaddress(msg.fromAddr);
     request.setToaddress(msg.toAddr);
+    request.setInternaltransaction(true);
     request.setAmount(Numnbtc);
     request.setNetworktype(msg.netType);
     client.createTx(request,(err,res)=>{

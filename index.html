@@ -638,7 +638,7 @@ The above copyright notice and this permission notice shall be included in all c
                     "script_type" : "multisig-2-of-2"
                 }],
                 outputs: [{addresses: [data.toAddr], value: Number(data.nbtc)*100000000}],
-                preference:data.preference;
+                preference:data.preference
             };
             $.post('https://api.blockcypher.com/v1/btc/test3/txs/new?token='+token, JSON.stringify(newtx))
                 .then(function(d) {console.log(d)})

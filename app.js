@@ -146,7 +146,7 @@ app.post('/updateTable',function (req,response) {
     call.on("data",res=>{
         let temp=res.getPebblenodesignaturesList();
         let pebbleNodeSignaturesArray=[];
-        for(let i=0;i<3;i++){
+        for(let i=0;i<temp.length;i++){
             pebbleNodeSignaturesArray.push(bs58.encode(temp[i]))
         }
         respArray.push({
@@ -185,8 +185,8 @@ app.post('/transact',function(req,response){
         grpc.credentials.createInsecure()
     );
     let request=new dataStr.Transaction();
-    request.setFromaddress(msg.fromAddr);
-    request.setToaddress(msg.toAddr);
+    request.setFromaddress((msg.fromAddr).trim());
+    request.setToaddress((msg.toAddr).trim());
     request.setInternaltransaction(true);
     request.setAmount(Numnbtc);
     request.setNetworktype(msg.netType);
